@@ -1,0 +1,39 @@
+{
+  "name": "vue-wp-media",
+  "version": "1.0.0",
+  "description": "Vue 3 component that integrates with WordPress default media uploader.",
+  "keywords": [
+    "vue",
+    "wordpress",
+    "media",
+    "uploader",
+    "vue3"
+  ],
+  "author": "Dev Kabir",
+  "license": "MIT",
+  "main": "dist/vue-wp-media.umd.js",
+  "module": "dist/vue-wp-media.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-wp-media.es.js",
+      "require": "./dist/vue-wp-media.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "vue": "^3.0.0",
+    "vite": "^7.0.0",
+    "vite-plugin-vue-devtools": "^7.7.7"
+  }
+}
