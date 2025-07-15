@@ -1,5 +1,5 @@
 const { createApp, ref } = Vue
-const { WpMedia, WpMediaPreview } = VueWpMedia
+const { WpMedia } = VueWpMedia
 
 const App = {
   template: `
