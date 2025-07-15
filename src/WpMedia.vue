@@ -1,8 +1,5 @@
 <template>
-  <button 
-    @click="openMedia"    
-    :disabled="disabled"
-  >
+  <button @click="openMedia">
     <slot>{{ buttonText }}</slot>
   </button>
 </template>
@@ -11,37 +8,42 @@
 const props = defineProps({
   buttonText: {
     type: String,
-    default: "Select Media"
+    default: "Select Media",
   },
   title: {
     type: String,
-    default: "Select Media"
+    default: "Select Media",
   },
   buttonLabel: {
     type: String,
-    default: "Use this media"
+    default: "Use this media",
   },
   mediaType: {
     type: String,
-    default: "image",
+    default: "all",
+    validator(value) {
+      return ["image", "video", "audio", "text", "application", "all"].includes(
+        value
+      );
+    },
   },
   multiple: {
     type: Boolean,
-    default: false
+    default: false,
   },
   modelValue: {
     type: Object,
     required: true,
-  }
+  },
 });
 
-const emit = defineEmits(["select"]);
+const emit = defineEmits(["update:modelValue"]);
 
 let mediaFrame = null;
 
 function openMedia() {
   if (props.disabled) return;
-  
+
   if (!window.wp?.media) {
     console.warn(
       "WordPress media uploader not available. Call wp_enqueue_media()."
@@ -50,22 +52,54 @@ function openMedia() {
   }
 
   if (!mediaFrame) {
+    const librarySettings = {};
+    if (
+      props.mediaType &&
+      props.mediaType !== "files" &&
+      props.mediaType !== "all"
+    ) {
+      librarySettings.type = props.mediaType;
+    }
+
     mediaFrame = wp.media({
       title: props.title,
+      state: "library",
       button: { text: props.buttonLabel },
-      library: { type: props.mediaType },
+      library: librarySettings,
       multiple: props.multiple,
     });
 
     mediaFrame.on("select", () => {
       const selection = mediaFrame.state().get("selection");
       if (props.multiple) {
-        const selected = selection.map(item => item.toJSON());
+        const selected = selection.map((item) => item.toJSON());
         emit("update:modelValue", selected);
       } else {
         const selected = selection.first().toJSON();
         emit("update:modelValue", selected);
       }
+    });
+
+    mediaFrame.on("open", () => {
+      if (
+        !props.modelValue ||
+        (props.multiple && props.modelValue.length === 0)
+      ) {
+        return;
+      }
+
+      const selection = mediaFrame.state().get("selection");
+      const ids = props.multiple
+        ? props.modelValue.map((item) => item.id)
+        : [props.modelValue.id];
+
+      ids.forEach((id) => {
+        if (id) {
+          const attachment = wp.media.attachment(id);
+          attachment.fetch();
+          selection.add(attachment ? [attachment] : []);
+        }
+      });
     });
   }
 

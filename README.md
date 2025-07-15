@@ -1,17 +1,47 @@
 # Vue WP Media
 
-A Vue 3 component that opens the WordPress media uploader with customizable styling and behavior. Features multiple button variants, media type filtering, and responsive design.
+A simple button for WordPress that lets you pick pictures, videos, and files. Works with Vue 3 and is super easy to use!
 
-## Install
+## What does this do?
+
+If you have a WordPress website and want to add a "Choose File" button that opens WordPress's file picker, this package does exactly that. No coding experience needed!
+
+## Why use this?
+
+### ✅ **Super Easy**
+- Just 3 lines of code to get a working file picker
+- No complicated setup
+- Works right away
+
+### ✅ **Uses WordPress Files**
+- Uses the same file picker as WordPress admin
+- All your uploaded files are there
+- Same look and feel users know
+
+### ✅ **Perfect for**
+- Adding file pickers to your WordPress site
+- Letting users choose images, videos, or documents
+- Making WordPress admin pages with Vue
+
+## What you need
+
+- A WordPress website
+- Vue 3 (a JavaScript tool)
+- Basic HTML knowledge
+
+## How to install
+
+Type this in your project folder:
 
 ```bash
 npm install vue-wp-media
 ```
 
-## Usage
+## How to use
 
-### Basic Usage
+### Method 1: The Easy Way
 
+Step 1: Add to your Vue app
 ```js
 import { createApp } from "vue";
 import App from "./App.vue";
@@ -22,100 +52,230 @@ app.use(VueWpMedia);
 app.mount("#app");
 ```
 
+Step 2: Use in your page
 ```vue
 <template>
-  <WpMedia @select="(url) => (image = url)">Select Image</WpMedia>
-  <img :src="image" v-if="image" />
+  <WpMedia v-model="myFile" button-text="Choose File" />
+  <p>You picked: {{ myFile.filename }}</p>
 </template>
+
+<script setup>
+import { ref } from "vue";
+const myFile = ref({});
+</script>
 ```
 
-### Advanced Usage
+Done! You now have a working file picker.
+
+### Method 2: Import the piece you need
 
 ```vue
 <template>
-  <div>
-    <!-- Primary button with custom text -->
-    <WpMedia 
-      @select="onSelect"
-      button-text="Choose Image"
-      title="Select an Image"
-      button-label="Use this image"
-    />
-    
-    <!-- Secondary button with custom width -->
-    <WpMedia 
-      @select="onSelect"
-      variant="secondary"
-      button-text="Browse Media"
-      width="150px"
-    />
-    
-    <!-- Outline button for files -->
-    <WpMedia 
-      @select="onSelect"
-      variant="outline"
-      media-type="application"
-      title="Select a File"
-      button-label="Use this file"
-    />
-    
-    <!-- Multiple selection -->
-    <WpMedia 
-      @select="onMultipleSelect"
-      :multiple="true"
-      button-text="Select Multiple Images"
-    />
+  <WpMedia v-model="myFile" button-text="Choose File" />
+</template>
+
+<script setup>
+import { ref } from "vue";
+import { WpMedia } from "vue-wp-media";
+
+const myFile = ref({});
+</script>
+```
+
+## Examples
+
+### Pick one image
+```vue
+<template>
+  <WpMedia v-model="photo" button-text="Pick Photo" />
+  <img :src="photo.url" v-if="photo.url" />
+</template>
+
+<script setup>
+import { ref } from "vue";
+const photo = ref({});
+</script>
+```
+
+### Pick multiple files
+```vue
+<template>
+  <WpMedia v-model="files" :multiple="true" button-text="Pick Files" />
+  
+  <div v-for="file in files" :key="file.id">
+    <p>{{ file.filename }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const selectedMedia = ref('')
-const multipleMedia = ref([])
-
-const onSelect = (url) => {
-  selectedMedia.value = url
-}
-
-const onMultipleSelect = (mediaArray) => {
-  multipleMedia.value = mediaArray
-}
+import { ref } from "vue";
+const files = ref([]);
 </script>
 ```
 
-## Props
+### Pick only images
+```vue
+<template>
+  <WpMedia v-model="image" media-type="image" button-text="Pick Image" />
+</template>
+```
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `button-text` | String | `"Select Media"` | Text displayed on the button |
-| `title` | String | `"Select Media"` | Title of the media picker dialog |
-| `button-label` | String | `"Use this media"` | Label for the media picker's use button |
-| `media-type` | String | `"image"` | Media type filter: `"image"`, `"audio"`, `"video"`, `"application"` |
-| `multiple` | Boolean | `false` | Allow multiple file selection |
-| `variant` | String | `"primary"` | Button style: `"primary"`, `"secondary"`, `"outline"` |
-| `width` | String | `"auto"` | Custom button width |
-| `height` | String | `"auto"` | Custom button height |
-| `disabled` | Boolean | `false` | Disable the button |
+### Pick only videos
+```vue
+<template>
+  <WpMedia v-model="video" media-type="video" button-text="Pick Video" />
+</template>
+```
 
-## Events
+### Make the button look nice
+```vue
+<template>
+  <!-- Blue button -->
+  <WpMedia v-model="file1" class="button button-primary" button-text="Primary" />
+  
+  <!-- Gray button -->
+  <WpMedia v-model="file2" class="button button-secondary" button-text="Secondary" />
+</template>
+```
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `select` | `String \| Array` | Emitted when media is selected. Returns URL string for single selection, array of media objects for multiple selection |
+## Settings you can change
 
-## Button Variants
+| Setting | What it does | Default |
+|---------|-------------|---------|
+| `button-text` | Text on the button | "Select Media" |
+| `title` | Title of the popup | "Select Media" |
+| `button-label` | Text on "Use" button | "Use this media" |
+| `media-type` | What files to show | "all" |
+| `multiple` | Pick many files | false |
 
-- **Primary**: WordPress admin blue button (default)
-- **Secondary**: Light gray button
-- **Outline**: Transparent button with blue border
+### File types you can pick
+- `image` - Pictures only
+- `video` - Videos only  
+- `audio` - Sound files only
+- `application` - Documents (PDF, Word, etc.)
+- `text` - Text files
+- `all` - Any file type
 
-## Styling
+## What you get when someone picks a file
 
-The component includes scoped CSS with WordPress admin color scheme. All styles are prefixed with `.wp-media-button` to avoid conflicts.
+```js
+{
+  id: 123,                    // WordPress file number
+  url: "https://...",         // Link to the file
+  filename: "my-photo.jpg",   // File name
+  alt: "A nice photo",        // Alt text for images
+  title: "My Photo",          // File title
+  mime: "image/jpeg",         // File type
+  type: "image",              // General type
+}
+```
 
-## Requirements
+## Setup WordPress
 
-- Vue 3
-- WordPress environment with `wp_enqueue_media()` called
-- WordPress media uploader scripts loaded
+Your WordPress needs this code (ask a developer to add it):
+
+```php
+function my_media_scripts() {
+    wp_enqueue_media(); // This loads WordPress file picker
+    wp_enqueue_script('vue-wp-media', 'path/to/vue-wp-media.umd.js');
+    wp_enqueue_style('vue-wp-media', 'path/to/vue-wp-media.css');
+}
+add_action('admin_enqueue_scripts', 'my_media_scripts');
+```
+
+## Use without building
+
+If you don't want to build anything, copy this code:
+
+```html
+<!-- Load Vue 3 -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<!-- Load this tool -->
+<script src="path/to/vue-wp-media.umd.js"></script>
+
+<div id="app">
+  <WpMedia v-model="myFile" button-text="Pick File"></WpMedia>
+</div>
+
+<script>
+const { createApp } = Vue;
+const { WpMedia } = VueWpMedia;
+
+createApp({
+  components: { WpMedia },
+  setup() {
+    const myFile = Vue.ref({});
+    return { myFile };
+  },
+}).mount("#app");
+</script>
+```
+
+## Test it
+
+### Build commands
+```bash
+# Start development
+npm run dev
+
+# Build for your website
+npm run build
+
+# Preview your build
+npm run preview
+```
+
+### Test with WordPress
+1. Put this folder in `wp-content/plugins/vue-wp-media/`
+2. Turn on the plugin in WordPress admin
+3. Go to "Vue Media Test" page to try it
+
+## Before and after
+
+**Before (hard way):**
+```js
+// Lots of complicated code (100+ lines)
+let mediaFrame = wp.media({
+  title: 'Select Media',
+  state: 'library',
+  library: { type: 'image' },
+  multiple: false
+});
+
+mediaFrame.on('select', function() {
+  // More complicated code...
+});
+
+// Even more code...
+```
+
+**After (easy way):**
+```vue
+<template>
+  <WpMedia v-model="selectedImage" button-text="Pick Image" />
+</template>
+
+<script setup>
+import { ref } from "vue"
+import { WpMedia } from "vue-wp-media"
+
+const selectedImage = ref({})
+</script>
+```
+
+Much easier! 🎉
+
+## What browsers work
+
+- Chrome, Firefox, Safari, Edge
+- WordPress 5.0 or newer
+- Vue 3.0 or newer
+
+## License
+
+MIT License - free to use for any project!
+
+---
+
+**Made simple for everyone to use!**
