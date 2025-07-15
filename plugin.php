@@ -15,6 +15,12 @@ add_action('admin_enqueue_scripts', function () {
     // Load Vue from CDN or locally
     wp_enqueue_script('vue', 'https://unpkg.com/vue@3/dist/vue.global.prod.js');
 
+    // Load built Vue component CSS
+    wp_enqueue_style(
+        'vue-wp-media',
+        plugin_dir_url(__FILE__) . 'dist/vue-wp-media.css'
+    );
+    
     // Load built Vue component (from same dir)
     wp_enqueue_script(
         'vue-wp-media',
