@@ -1,21 +1,22 @@
-import { createApp, ref } from 'vue'
-import { WpMedia } from './dist/vue-wp-media.umd.js' // optional if library exports component
+const { createApp, ref } = Vue;
+const { WpMedia } = VueWpMedia;
 
 const App = {
-    template: `
-    <div>
-      <WpMedia @select="onSelect" />
-      <img v-if="img" :src="img" style="max-width: 300px; margin-top: 10px;" />
-    </div>
+  template: `
+  <WpMedia class="button button-primary" v-model="img" button-text="Choose Image" title="Select an Image" button-label="Use this image" /> 
+  <pre>{{img}}</pre>
+  <WpMedia class="button button-primary" v-model="csv" button-text="Choose csv" title="Select an csv" button-label="Use this csv" mediaType="text" />
+  <pre>{{csv}}</pre>
+  <WpMedia class="button button-primary" v-model="application" button-text="Choose application" title="Select an application" button-label="Use this application" mediaType="application" />
+  <pre>{{application}}</pre>
   `,
-    components: { WpMedia },
-    setup() {
-        const img = ref('')
-        const onSelect = url => {
-            img.value = url
-        }
-        return { img, onSelect }
-    }
-}
+  components: { WpMedia },
+  setup() {
+    const img = ref({});
+    const csv = ref({});
+    const application = ref({});
+    return { img, csv, application };
+  },
+};
 
-createApp(App).mount('#app')
+createApp(App).mount("#app");
